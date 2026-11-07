@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>セトリメーカー｜録音から曲の区切りを見つける</title>
+<meta name="description" content="イベントの録音を入れると、曲の切れ目の候補を出します。曲名を入れて、セトリとして書き出せるブラウザのアプリ。録音は端末の外に出ません。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="セトリメーカー｜録音から曲の区切りを見つける">
+<meta property="og:description" content="イベントの録音を入れると、曲の切れ目の候補が出ます。曲名を入れて、セトリとして書き出せます。録音は端末の外に出ません。">
+<meta property="og:url" content="https://yukitchy.github.io/setlist-maker/">
+<meta property="og:image" content="https://yukitchy.github.io/setlist-maker/ogp.png?v=1">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@500;700;800;900&family=Noto+Sans+JP:wght@500;700&family=Oswald:wght@500;700&display=swap">
+<style>
+:root{--paper:#F4EFE6;--ink:#141414;--red:#E5361F;--tint:#F0DCD3;--ink60:rgba(20,20,20,.62);--hf:"M PLUS 1p","Noto Sans JP",sans-serif;--nf:"Oswald","Noto Sans JP",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#F4EFE6;--ink:#141414;--red:#E5361F}}
+:root[data-theme="dark"]{--paper:#F4EFE6;--ink:#141414;--red:#E5361F}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font:500 16px/1.8 "Noto Sans JP",system-ui,sans-serif;overflow-x:hidden;word-break:auto-phrase;line-break:strict}
+h1,h2,.cap,.lead,.sub{text-wrap:balance}
+.w{max-width:760px;margin:0 auto;padding:0 16px}
+.sl{display:block;height:14px;background:repeating-linear-gradient(112deg,var(--red) 0 8px,transparent 8px 16px)}
+.top{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:3px solid var(--ink)}
+.top img{width:30px;height:30px;display:block}
+.top b{font:900 18px var(--hf)}
+h1{font:900 clamp(34px,9.4vw,56px)/1.18 var(--hf);margin:30px 0 14px;letter-spacing:.01em}
+h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--red) 62% 92%,transparent 92%)}
+.lead{font-weight:700;font-size:17px;max-width:34em}
+.cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:64px;margin:22px 0 6px;background:var(--red);color:var(--paper);text-decoration:none;font:900 22px var(--hf)}
+.cta::after{content:"";border-left:14px solid var(--paper);border-top:8px solid transparent;border-bottom:8px solid transparent}
+.sub{font-size:13px;color:var(--ink60);font-weight:700}
+.todo{margin:26px 0 0;border:3px solid var(--ink);background:var(--paper)}
+.todo h2{background:var(--ink);color:var(--paper);font:800 17px var(--hf);padding:8px 14px}
+.todo ol{list-style:none;counter-reset:n;padding:6px 14px 10px}
+.todo li{counter-increment:n;display:grid;grid-template-columns:38px 1fr;gap:6px;padding:9px 0;border-top:2px solid var(--ink);font-weight:700;line-height:1.6}
+.todo li:first-child{border-top:0}
+.todo li::before{content:counter(n);font:700 30px/1 var(--nf);color:var(--red);transform:skewX(-9deg)}
+.todo small{display:block;font-weight:500;font-size:13px;color:var(--ink60)}
+section{padding:46px 0 0}
+h2.h{font:900 clamp(24px,6.4vw,32px)/1.25 var(--hf);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+h2.h::before{content:"";flex:none;width:12px;height:26px;background:var(--red);transform:skewX(-14deg)}
+p+p{margin-top:12px}
+.flow{display:grid;grid-template-columns:1fr;gap:0;margin-top:16px;border:3px solid var(--ink)}
+.flow div{padding:12px 14px;border-top:2px solid var(--ink);font-weight:700}
+.flow div:first-child{border-top:0}
+.flow .no{background:var(--tint);border-top:2px solid var(--ink)}
+.flow s{color:var(--ink60);text-decoration-thickness:2px}
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;align-items:start}
+.ph{border:3px solid var(--ink);background:#fff;line-height:0}
+.ph img{display:block;width:100%;height:auto}
+.cap{margin-top:8px;font-size:14px;font-weight:700;line-height:1.6}
+.cap b{display:inline-block;background:var(--red);color:var(--paper);font:700 14px/1 var(--nf);padding:4px 7px;margin-right:6px;transform:skewX(-9deg)}
+.feat{list-style:none;display:grid;gap:0;margin-top:6px;border-top:3px solid var(--ink)}
+.feat li{padding:14px 0;border-bottom:2px solid var(--ink)}
+.feat b{display:block;font:800 18px/1.4 var(--hf);margin-bottom:2px}
+.feat span{color:var(--ink60);font-weight:700;font-size:15px}
+.box{border-left:6px solid var(--red);padding:4px 0 4px 14px;font-weight:700}
+.lim{list-style:none;margin-top:6px}
+.lim li{padding:10px 0 10px 26px;position:relative;border-bottom:2px solid var(--ink);font-weight:700}
+.lim li::before{content:"";position:absolute;left:2px;top:19px;width:12px;height:12px;background:var(--ink);transform:skewX(-14deg)}
+.end{margin-top:50px;background:var(--ink);color:var(--paper);padding:30px 16px 34px}
+.end h2{font:900 clamp(24px,6.6vw,32px)/1.3 var(--hf);margin-bottom:10px}
+.end p{font-weight:700;margin-bottom:6px}
+.end .cta{margin-top:18px}
+.end .sl{margin-top:26px}
+footer{padding:16px 0 30px;font-size:13px;color:var(--ink60);font-weight:700}
+@media(min-width:700px){.steps{gap:24px}.cta{max-width:420px}}
+</style></head><body>
+
+<div class="w">
+<div class="top"><img src="favicon.svg" alt="" width="30" height="30"><b>セトリメーカー</b></div>
+
+<h1>録音から、<br><em>曲の区切り</em>を<br>見つける。</h1>
+<p class="lead">イベントの録音を入れると、曲の切れ目の候補を出します。曲名を入れて、セトリとして書き出せます。</p>
+
+<a class="cta" href="app/">デモを触ってみる</a>
+<p class="sub">読む前に触ってOKです。スマホでそのまま動きます。</p>
+
+<div class="todo">
+<h2>ササキチさんへ、3つお願い（5分）</h2>
+<ol>
+<li><div>デモを開いて、曲名を1つ書き換える<small>1分。ボタンは「デモを触ってみる」</small></div></li>
+<li><div>「自分の録音を読み込む」で、実際のイベント録音を入れる<small>3分。録音は端末の外に出ません</small></div></li>
+<li><div>使いにくかったところを、ユウキにLINEで一言<small>1分。「ここで迷った」だけで十分です</small></div></li>
+</ol>
+</div>
+</div>
+
+<div class="w"><section>
+<h2 class="h">録音のあとの手間を減らします</h2>
+<p>イベントのあと、録音を聴き返して曲が変わった時刻をメモし、曲名を調べて、並べて、投稿する。セトリを残すには、この作業が毎回かかります。</p>
+<div class="flow">
+<div class="no"><s>聴き返して、曲が変わる時刻を探す</s><br>→ 切れ目の候補を先に出します</div>
+<div>あなたがやること: 候補を確認して、ずれていたら直す</div>
+<div>曲名を入れる（ジャケットとアーティスト名が出ます）</div>
+<div>書き出して、コピー、X、LINEへ</div>
+</div>
+</section></div>
+
+<div class="w"><section>
+<h2 class="h">使い方は3つです</h2>
+<div class="steps">
+<div>
+<div class="ph"><img src="img/shot-list.jpg" alt="曲の区切りの一覧。左に波形、右にジャケットと曲番号" width="780" height="1688"></div>
+<p class="cap"><b>1</b>録音を読み込むと、曲ごとに区切った一覧が出ます。</p>
+<p class="cap"><b>2</b>聴きながら「ここで区切る」で足して、曲名を入れます。</p>
+</div>
+<div>
+<div class="ph"><img src="img/shot-export.jpg" alt="セトリを書き出す画面。時刻と曲名が並ぶ" width="780" height="1688"></div>
+<p class="cap"><b>3</b>「書き出す」で、時刻つきのセトリになります。</p>
+</div>
+</div>
+</section></div>
+
+<div class="w"><section>
+<h2 class="h">できること</h2>
+<ul class="feat">
+<li><b>区切りの候補を出す</b><span>音の大きさの落ち込みや立ち上がりから、曲が変わりそうな場所を探します。</span></li>
+<li><b>聴きながら、足す・外す</b><span>再生バーで聴き直し、「ここで区切る」で足します。要らない区切りは×で外せます。</span></li>
+<li><b>曲名を入れると、ジャケットが出る</b><span>曲名からジャケットとアーティスト名を探して並べます。</span></li>
+<li><b>そのままシェア</b><span>左の帯から、X、LINE、端末の共有、コピーができます。</span></li>
+</ul>
+</section></div>
+
+<div class="w"><section>
+<h2 class="h">録音は外に出ません</h2>
+<p class="box">録音ファイルは、お使いのブラウザの中だけで解析します。サーバーには送りません。外に出る通信は、ジャケットを探すときの曲名と、書体の読み込みだけです。</p>
+</section></div>
+
+<div class="w"><section>
+<h2 class="h">いまのところ苦手なこと</h2>
+<ul class="lim">
+<li>曲名は自動では入りません。自分で入力します。</li>
+<li>音の切れ目を手がかりにするので、切れ目のないつなぎは候補が出ないことがあります。そこは「ここで区切る」で足します。</li>
+<li>とても長い録音は、端末のメモリによって読み込めないことがあります。</li>
+<li>再生と区切りの追加は、自分の録音を読み込んだあとに使えます。デモでは動きません。</li>
+</ul>
+</section></div>
+
+<div class="end">
+<div class="w" style="padding:0">
+<h2>まず、デモを開いてみてください</h2>
+<p>触ったあと、自分の録音を1本入れて、迷ったところをユウキに教えてください。</p>
+<a class="cta" href="app/">デモを触ってみる</a>
+<i class="sl"></i>
+</div>
+</div>
+<div class="w"><footer>セトリメーカー　試作版　制作: ユウキ</footer></div>
+
+</body></html>
