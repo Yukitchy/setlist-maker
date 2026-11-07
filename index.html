@@ -2,13 +2,13 @@
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light">
-<title>セトリメーカー｜録音から曲の区切りを見つける</title>
-<meta name="description" content="イベントの録音を入れると、曲の切れ目の候補を出します。曲名を入れて、セトリとして書き出せるブラウザのアプリ。録音は端末の外に出ません。">
+<title>セトリメーカー｜録音からセットリストをつくる</title>
+<meta name="description" content="イベントの録音を読み込むと、曲の区切りを探して時刻つきのセットリストを作ります。曲名を入れて書き出せるブラウザのアプリ。録音は端末の外に出ません。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="セトリメーカー｜録音から曲の区切りを見つける">
-<meta property="og:description" content="イベントの録音を入れると、曲の切れ目の候補が出ます。曲名を入れて、セトリとして書き出せます。録音は端末の外に出ません。">
+<meta property="og:title" content="セトリメーカー｜録音からセットリストをつくる">
+<meta property="og:description" content="イベントの録音を読み込むと、時刻つきのセットリストができます。曲名を入れて、そのまま書き出せます。録音は端末の外に出ません。">
 <meta property="og:url" content="https://yukitchy.github.io/setlist-maker/">
-<meta property="og:image" content="https://yukitchy.github.io/setlist-maker/ogp.png?v=3">
+<meta property="og:image" content="https://yukitchy.github.io/setlist-maker/ogp.png?v=4">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -38,13 +38,13 @@ h1,h2,h3,.sub,.cap{text-wrap:balance}
 .kick::before,.kick::after{content:"";width:14px;height:2px;background:var(--ink);transform:rotate(60deg)}
 .kick::after{transform:rotate(-60deg)}
 h1{margin-top:16px;font:900 clamp(40px,12.4vw,54px)/1.2 var(--sans);letter-spacing:-.01em}
-h1 .o{display:block;color:var(--o2);background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:1.22em;line-height:1.15}
+h1 .o{display:block;white-space:nowrap;color:var(--o2);background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:1.04em;line-height:1.2}
 h1 .s{display:block;font:900 1.02em/1.25 var(--serif)}
 .term{margin-top:20px;background:var(--ink);color:#fff;border-radius:12px;padding:12px 14px 13px;font:500 12px/1.75 var(--mono);max-width:300px}
 .dots{display:flex;gap:5px;margin-bottom:6px}.dots i{width:9px;height:9px;border-radius:50%;background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
 .term .g{color:var(--lime)}.term .m{color:#a8a29e}
-.hero .ph{margin:20px 20px 0;border:3px solid var(--ink);border-bottom:0;border-radius:20px 20px 0 0;background:#fff;line-height:0;overflow:hidden;height:300px}
-.hero .ph img{width:100%;display:block}
+.dev{width:230px;margin:22px auto 24px;border:3px solid var(--ink);border-radius:26px;overflow:hidden;background:#fff;line-height:0;box-shadow:8px 8px 0 var(--o1)}
+.dev img{width:100%;height:auto;display:block}
 .base{display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:#fff;padding:14px 20px}
 .base .lg{font-size:26px}
 .base small{font:500 10px/1.5 var(--mono);color:#d6d3d1;text-align:right;letter-spacing:.06em}
@@ -113,15 +113,15 @@ p+p{margin-top:10px}
 
 <header class="hd"><a class="lg" href="#">SETLIST <b>MAKER</b></a><a class="pill" href="app/">デモを触る</a></header>
 
-<div class="tags" aria-hidden="true"><div class="t"><span>#区切り候補</span><span>#ジャケット表示</span><span>#時刻つきセトリ</span><span>#Xシェア</span><span>#LINEシェア</span><span>#録音は端末内</span><span>#ブラウザで動く</span></div><div class="t"><span>#区切り候補</span><span>#ジャケット表示</span><span>#時刻つきセトリ</span><span>#Xシェア</span><span>#LINEシェア</span><span>#録音は端末内</span><span>#ブラウザで動く</span></div></div>
+<div class="tags" aria-hidden="true"><div class="t"><span>#録音からセットリスト</span><span>#時刻つきセトリ</span><span>#区切り候補</span><span>#ジャケット表示</span><span>#Xシェア</span><span>#LINEシェア</span><span>#録音は端末内</span><span>#ブラウザで動く</span></div><div class="t"><span>#録音からセットリスト</span><span>#時刻つきセトリ</span><span>#区切り候補</span><span>#ジャケット表示</span><span>#Xシェア</span><span>#LINEシェア</span><span>#録音は端末内</span><span>#ブラウザで動く</span></div></div>
 
 <section class="hero">
 <div class="in">
 <p class="kick">イベントのセトリを残したい人へ</p>
-<h1>録音から<span class="o">曲の区切り</span><span class="s">を見つける</span></h1>
-<div class="term"><div class="dots"><i></i><i></i><i></i></div><div><span class="g">$</span> setlist --split rec.m4a</div><div class="m">14曲の区切りの候補を表示</div></div>
+<h1>録音から<span class="o">セットリスト</span><span class="s">をつくる</span></h1>
+<div class="term"><div class="dots"><i></i><i></i><i></i></div><div><span class="g">$</span> setlist --from rec.m4a</div><div class="m">14曲の時刻つきリストを作成</div></div>
 </div>
-<div class="ph"><img src="img/shot-list.jpg" alt="曲の区切りの一覧。左に波形、右にジャケットと曲番号" width="780" height="1688"></div>
+<div class="dev"><img src="img/hero-app.png" alt="セトリメーカーの画面。左に波形、右にジャケットと曲番号" width="1170" height="2532"></div>
 <div class="base"><span class="lg">SETLIST <b>MAKER</b></span><small>FROM RECORDING<br>TO SETLIST</small></div>
 </section>
 
@@ -142,9 +142,9 @@ p+p{margin-top:10px}
 
 <section class="card">
 <p class="eyebrow">ABOUT</p>
-<h2>セトリメーカーは<br><em>録音のあとの手間</em>を減らすアプリ</h2>
-<p>イベントのあと、録音を聴き返して曲が変わった時刻をメモし、曲名を調べて並べ、投稿する。セトリを残すには、この作業が毎回かかります。</p>
-<p>セトリメーカーは切れ目の候補を先に出します。あなたがやるのは、候補の確認と直し、曲名の入力、書き出しです。</p>
+<h2>セトリメーカーは<br><em>録音からセットリストを作る</em>アプリ</h2>
+<p>イベントの録音ファイルを読み込むと、曲が変わる場所を探して、時刻つきの曲リストを作ります。曲名を入れて直せば、そのままセットリストとして書き出せます。</p>
+<p>これまでは、録音を聴き返して曲が変わった時刻をメモし、曲名を調べて並べていました。この作業を、候補の確認と直しだけにします。</p>
 <div class="shots">
 <div><div class="ph"><img src="img/shot-list.jpg" alt="区切りの一覧" width="780" height="1688" loading="lazy"></div><p class="cap"><b>A</b>曲ごとに区切った一覧</p></div>
 <div><div class="ph"><img src="img/shot-export.jpg" alt="書き出し画面" width="780" height="1688" loading="lazy"></div><p class="cap"><b>B</b>時刻つきで書き出し</p></div>
@@ -155,11 +155,11 @@ p+p{margin-top:10px}
 
 <article class="pt">
 <div class="hd2"><p class="n">POINT<b>01</b></p></div>
-<h3>区切りの候補を先に出す</h3>
+<h3>録音から時刻つきのリストを作る</h3>
 <div class="win"><div class="bar"><i></i><i></i><i></i><span>split.log</span></div>
 <div class="wave" aria-hidden="true"><i style="height:30%"></i><i style="height:70%"></i><i style="height:90%"></i><i style="height:60%"></i><i class="c"></i><i style="height:20%"></i><i style="height:80%"></i><i style="height:95%"></i><i style="height:55%"></i><i style="height:75%"></i><i class="c"></i><i style="height:25%"></i><i style="height:65%"></i><i style="height:90%"></i><i style="height:50%"></i><i style="height:35%"></i><i class="c"></i><i style="height:60%"></i><i style="height:85%"></i><i style="height:70%"></i></div>
-<div class="r"><span class="dim">切れ目の候補</span><b>00:00 / 03:34 / 07:32</b></div></div>
-<p>音の大きさの落ち込みや立ち上がりから、曲が変わりそうな場所を探します。</p>
+<div class="r"><span class="dim">曲の頭出し時刻</span><b>00:00 / 03:34 / 07:32</b></div></div>
+<p>音の大きさの落ち込みや立ち上がりから、曲が変わりそうな場所を探して、時刻つきの曲リストにします。</p>
 </article>
 
 <article class="pt">
